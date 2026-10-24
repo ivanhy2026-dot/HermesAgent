@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navigator · 專案導覽</title>
+<meta name="description" content="Navigator 導覽網站：以卡片列出所有 web app 專案，支援搜尋與分類篩選。">
+<style>
+:root{
+  --bg:#0d1117;--panel:#161c26;--panel-2:#1e2634;--line:#2a3448;
+  --ink:#e9eef7;--ink-soft:#9fadc8;--muted:#66718a;
+  --accent:#4ea1ff;--ok:#3ddc97;--dev:#f2b341;
+  --radius:16px;--shadow:0 12px 32px rgba(0,0,0,.45);
+}
+@media (prefers-color-scheme:light){
+  :root{--bg:#eef1f7;--panel:#ffffff;--panel-2:#f4f6fb;--line:#dde3ee;
+    --ink:#17202f;--ink-soft:#5a6880;--muted:#8a97b0;--accent:#1f6fe0;
+    --ok:#0f9d76;--dev:#d98a06;--shadow:0 8px 24px rgba(30,45,80,.10)}
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;
+  background:var(--bg);color:var(--ink);line-height:1.6;min-height:100vh}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 72px}
+
+/* header */
+.head{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+.head h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;line-height:1.2}
+.head .sub{color:var(--ink-soft);font-size:14px;margin-top:6px;max-width:58ch}
+.head .meta{text-align:right;font-size:12.5px;color:var(--muted);line-height:1.8}
+.head .meta b{color:var(--ink-soft);font-weight:600}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}
+.searchwrap{position:relative;flex:1;min-width:220px}
+.searchwrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;fill:var(--muted);pointer-events:none}
+.searchwrap input{width:100%;padding:12px 14px 12px 38px;border-radius:12px;border:1px solid var(--line);
+  background:var(--panel);color:var(--ink);font:inherit;font-size:14.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
+  padding:8px 14px;border-radius:999px;font:inherit;font-size:13px;font-weight:600;
+  transition:background .15s,color .15s,border-color .15s}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.chip:focus-visible,.searchwrap input:focus-visible,.card a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.statusrow{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.schip{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);
+  padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:600}
+.schip[aria-pressed="true"]{background:var(--panel-2);border-color:var(--accent);color:var(--ink)}
+.count{font-size:13px;color:var(--muted);margin:14px 0 4px}
+.count b{color:var(--ink)}
+.count button{cursor:pointer;border:none;background:none;color:var(--accent);font:inherit;font-size:12.5px;font-weight:600;padding:2px 0;text-decoration:underline}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow);
+  transition:transform .16s,border-color .16s}
+.card:hover{transform:translateY(-3px);border-color:var(--accent)}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.badge{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap;flex:0 0 auto}
+.badge.live{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok);border:1px solid color-mix(in srgb,var(--ok) 40%,transparent)}
+.badge.dev{background:color-mix(in srgb,var(--dev) 16%,transparent);color:var(--dev);border:1px solid color-mix(in srgb,var(--dev) 40%,transparent)}
+.card .desc{font-size:13.5px;color:var(--ink-soft);flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:8px;background:var(--panel-2);
+  border:1px solid var(--line);color:var(--ink-soft)}
+.cat{font-size:11.5px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+.actions{display:flex;gap:10px;align-items:center;border-top:1px solid var(--line);padding-top:12px;margin-top:auto}
+.actions a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--accent);text-decoration:none}
+.actions a:hover{color:#fff;background:var(--accent);padding:5px 10px;border-radius:8px}
+.actions a svg{width:14px;height:14px;fill:currentColor}
+.actions .nolink{font-size:12px;color:var(--muted)}
+/* empty */
+.empty{text-align:center;padding:64px 20px;color:var(--muted);display:none}
+.empty .big{font-size:40px;margin-bottom:12px}
+.empty h3{font-size:18px;color:var(--ink);margin-bottom:6px}
+.err{text-align:center;padding:48px 20px;border:1.5px dashed var(--line);border-radius:var(--radius);
+  background:var(--panel);margin-top:20px;display:none}
+.err h3{font-size:17px;margin-bottom:8px;color:var(--dev)}
+.err p{font-size:13.5px;color:var(--ink-soft);max-width:64ch;margin:0 auto 14px;line-height:1.8}
+.err code{background:var(--panel-2);border:1px solid var(--line);padding:2px 8px;border-radius:6px;
+  font-size:12.5px;color:var(--ink);font-family:ui-monospace,Consolas,monospace}
+
+@media print{
+  :root{--bg:#fff;--panel:#fff;--panel-2:#f4f6fb;--line:#ccc;--ink:#111;--ink-soft:#444;--muted:#777;--shadow:none}
+  .controls,.statusrow,.count,.err{display:none!important}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="head">
+    <div>
+      <h1>Navigator <span style="color:var(--accent)">·</span> 專案導覽</h1>
+      <div class="sub">以卡片列出所有 web app 專案，支援搜尋與分類篩選。新增專案只需修改 <b style="color:var(--ink)">projects.json</b>。</div>
+    </div>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="controls">
+    <div class="searchwrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 14h-.8l-.3-.3a6.5 6.5 0 10-.7.7l.3.3v.8l5 5 1.5-1.5zM10 15a5 5 0 110-10 5 5 0 010 10z"/></svg>
+      <input type="search" id="q" placeholder="搜尋專案名稱、簡介或技術…" aria-label="搜尋專案">
+    </div>
+  </div>
+  <div class="chips" id="catChips" role="group" aria-label="依分類篩選"></div>
+  <div class="statusrow" id="statusChips" role="group" aria-label="依狀態篩選"></div>
+
+  <div class="count" id="count"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="empty" id="empty">
+    <div class="big">🔍</div>
+    <h3>沒有符合條件的專案</h3>
+    <p>試試清除搜尋或重設分類與狀態篩選。</p>
+    <button class="chip" style="margin-top:8px" id="emptyReset">重設</button>
+  </div>
+
+  <div class="err" id="err">
+    <h3>無法載入 projects.json</h3>
+    <p>此頁需以 HTTP 方式開啟才能讀取資料檔。請將 <b>navigator</b> 資料夾部署到任意靜態主機（含本倉庫之 GitHub Pages），<br>或在該資料夾執行：<br><code>python3 -m http.server 8000</code> 後開啟 <code>http://localhost:8000/</code></p>
+    <p style="font-size:12.5px;color:var(--muted)">新增／修改專案：編輯同資料夾之 <code>projects.json</code>，此頁即自動顯示。</p>
+  </div>
+</div>
+
+<script>
+"use strict";
+var DATA=null;
+var state={q:'',cats:new Set(),statuses:new Set()};
+
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function statusLabel(s){return s==='live'?'已上線':(s==='dev'?'開發中':(s||'未標示'));}
+function statusClass(s){return s==='live'?'live':(s==='dev'?'dev':'dev');}
+
+function load(){
+  fetch('projects.json',{cache:'no-store'})
+    .then(function(r){ if(!r.ok)throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(d){ DATA=d; boot(); })
+    .catch(function(){ document.getElementById('err').style.display='block'; document.getElementById('grid').style.display='none'; });
+}
+function boot(){
+  renderMeta(); buildChips(); render();
+}
+function renderMeta(){
+  var m=DATA.meta||{};
+  var cats=(DATA.categories||[]);
+  document.getElementById('meta').innerHTML=
+    '共 <b>'+DATA.projects.length+'</b> 個專案'+(m.updated?(' ・ 資料更新日期 <b>'+esc(m.updated)+'</b>'):'')+(m.title?(' ・ 來源 <b>'+esc(m.source||'projects.json')+'</b>'):'');
+}
+function buildChips(){
+  var cats=(DATA.categories||[]);
+  // also catch categories used by projects but not declared
+  DATA.projects.forEach(function(p){ if(p.category && cats.indexOf(p.category)===-1) cats.push(p.category); });
+  var cc=document.getElementById('catChips');
+  cc.innerHTML='<button class="chip" aria-pressed="true" data-cat="all">全部分類</button>'+
+    cats.map(function(c){return '<button class="chip" aria-pressed="false" data-cat="'+esc(c)+'">'+esc(c)+'</button>';}).join('');
+  cc.addEventListener('click',function(e){
+    var b=e.target.closest('.chip'); if(!b)return;
+    var v=b.getAttribute('data-cat');
+    if(v==='all'){ cats.forEach(function(c){state.cats.delete(c);}); cc.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-cat')==='all'?'true':'false');}); }
+    else{
+      if(b.getAttribute('aria-pressed')==='true') state.cats.delete(v); else state.cats.add(v);
+      b.setAttribute('aria-pressed',state.cats.has(v)?'true':'false');
+      var all=cc.querySelector('[data-cat="all"]');
+      all.setAttribute('aria-pressed', state.cats.size===0?'true':'false');
+    }
+    render();
+  });
+  var st=document.getElementById('statusChips');
+  st.innerHTML='<button class="schip" aria-pressed="true" data-s="all">全部狀態</button>'+
+    ['live','dev'].map(function(s){return '<button class="schip" aria-pressed="false" data-s="'+s+'">'+statusLabel(s)+'</button>';}).join('');
+  st.addEventListener('click',function(e){
+    var b=e.target.closest('.schip'); if(!b)return;
+    var v=b.getAttribute('data-s');
+    if(v==='all'){ state.statuses.clear(); }
+    else{ if(state.statuses.has(v))state.statuses.delete(v); else state.statuses.add(v); }
+    st.querySelectorAll('.schip').forEach(function(x){
+      var d=x.getAttribute('data-s');
+      x.setAttribute('aria-pressed', (d==='all'&&state.statuses.size===0)||(d!=='all'&&state.statuses.has(d))?'true':'false');
+    });
+    render();
+  });
+  document.getElementById('q').addEventListener('input',function(){state.q=this.value.trim();render();});
+  document.getElementById('emptyReset').addEventListener('click',function(){
+    state.q='';state.cats.clear();state.statuses.clear();
+    document.getElementById('q').value='';
+    var cc2=document.getElementById('catChips');cc2.querySelectorAll('.chip').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-cat')==='all'?'true':'false');});
+    var st2=document.getElementById('statusChips');st2.querySelectorAll('.schip').forEach(function(x){x.setAttribute('aria-pressed',x.getAttribute('data-s')==='all'?'true':'false');});
+    render();
+  });
+}
+function filtered(){
+  return DATA.projects.filter(function(p){
+    if(state.cats.size && !state.cats.has(p.category||'未分類'))return false;
+    if(state.statuses.size && !state.statuses.has(p.status||'dev'))return false;
+    if(state.q){
+      var hay=(p.name+' '+(p.description||'')+' '+(p.tech||[]).join(' ')+' '+(p.category||'')).toLowerCase();
+      if(hay.indexOf(state.q.toLowerCase())===-1)return false;
+    }
+    return true;
+  });
+}
+function render(){
+  var list=filtered();
+  var grid=document.getElementById('grid'), empty=document.getElementById('empty');
+  if(list.length===0){ grid.style.display='none'; empty.style.display='block'; }
+  else{ grid.style.display='grid'; empty.style.display='none'; }
+  grid.innerHTML=list.map(function(p){
+    var hasLink=!!p.link;
+    var linkHtml = hasLink
+      ? '<a href="'+esc(p.link)+'" target="_blank" rel="noopener" aria-label="開啟 '+esc(p.name)+'">'+
+        ' <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 5H5a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2zm-8 9h6.5L13 19.5 10 14z"/></svg> 開啟專案</a>'
+      : '<span class="nolink">尚無公開連結（開發中）</span>';
+    return '<article class="card" aria-label="'+esc(p.name)+'">'+
+      '<div class="top"><h3>'+esc(p.name)+'</h3><span class="badge '+statusClass(p.status)+'">'+esc(statusLabel(p.status))+'</span></div>'+
+      '<p class="desc">'+esc(p.description||'')+'</p>'+
+      (p.tech && p.tech.length ? '<div class="tags">'+p.tech.map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+'</div>':'')+
+      (p.category ? '<div class="cat">分類：'+esc(p.category)+'</div>':'')+
+      '<div class="actions">'+linkHtml+(p.repo?'<a href="'+esc(p.repo)+'" target="_blank" rel="noopener" style="font-weight:500;font-size:12px;color:var(--muted)" aria-label="'+esc(p.name)+' 的原始碼庫">原始碼</a>':'')+'</div>'+
+      '</article>';
+  }).join('');
+  var total=DATA.projects.length;
+  var bits=[];
+  if(state.q)bits.push('搜尋「'+esc(state.q)+'」');
+  if(state.cats.size)bits.push('分類＝'+Array.from(state.cats).map(esc).join('、'));
+  if(state.statuses.size)bits.push('狀態＝'+Array.from(state.statuses).map(function(s){return statusLabel(s);}).join('、'));
+  document.getElementById('count').innerHTML=
+    (bits.length?('已套用：<b>'+bits.join('；')+'</b>．'):'')+
+    '顯示 <b>'+list.length+'</b> / '+total+' 個專案'+(bits.length?'　<button id="cReset">重設</button>':'');
+  var rb=document.getElementById('cReset');
+  if(rb)rb.addEventListener('click',function(){document.getElementById('emptyReset').click();});
+}
+load();
+</script>
+</body>
+</html>

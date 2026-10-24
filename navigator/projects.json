@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "title": "Navigator · 專案導覽",
+    "subtitle": "Johnny / Ivan 的 Web App 專案清單",
+    "updated": "2026-10-24",
+    "source": "projects.json",
+    "note": "新增專案：只需在下方 projects 陣列加入一個物件，此頁會自動讀取並顯示。"
+  },
+  "categories": ["工具", "教育", "數據", "個人"],
+  "projects": [
+    {
+      "id": "todo-app",
+      "name": "Todo List",
+      "description": "基礎 Todo web app：新增、刪除、標記完成、拖曳排序、過濾器與進度條，深／淺色主題，localStorage 本地持久化。純 HTML/CSS/JS 單檔、零依賴。",
+      "tech": ["HTML", "CSS", "JavaScript", "localStorage"],
+      "category": "工具",
+      "status": "live",
+      "link": "https://ivanhy2026-dot.github.io/HermesAgent/",
+      "repo": "https://github.com/ivanhy2026-dot/HermesAgent"
+    },
+    {
+      "id": "johnny-site",
+      "name": "Johnny 教育中心主頁",
+      "description": "兒童私人教育中心公司主頁：公司簡介、教學理念、課程卡、師資介紹、聯絡方式與 Footer。響應式、高對比、可列印，圖片與 logo 內嵌、單檔交付。",
+      "tech": ["HTML", "CSS", "JavaScript", "Base64 圖片"],
+      "category": "教育",
+      "status": "dev",
+      "link": "",
+      "repo": "https://github.com/ivanhy2026-dot/HermesAgent"
+    },
+    {
+      "id": "sales-dashboard",
+      "name": "銷售資料儀表板",
+      "description": "由 Dashboard_Data.xlsx 生成的互動式繁體中文 HTML 儀表板：KPI、篩選器、互動圖表（折線／長條／圓環）、可搜尋排序明細表與列印樣式，單一自包含檔案。",
+      "tech": ["HTML", "CSS", "SVG 圖表", "JavaScript"],
+      "category": "數據",
+      "status": "dev",
+      "link": "",
+      "repo": "https://github.com/ivanhy2026-dot/HermesAgent"
+    }
+  ]
+}

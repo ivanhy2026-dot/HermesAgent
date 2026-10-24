@@ -32,7 +32,8 @@ jobs:
           mkdir -p dist
           cp index.html dist/
           [ -d assets ] && cp -r assets dist/ || true
-          echo "dist/ ready:" && ls -1 dist/
+          [ -d navigator ] && cp -r navigator dist/ || true
+          echo "dist/ ready:" && ls -1R dist/
 
       - name: Validate output
         run: |
