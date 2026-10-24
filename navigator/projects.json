@@ -24,8 +24,8 @@
       "description": "兒童私人教育中心公司主頁：公司簡介、教學理念、課程卡、師資介紹、聯絡方式與 Footer。響應式、高對比、可列印，圖片與 logo 內嵌、單檔交付。",
       "tech": ["HTML", "CSS", "JavaScript", "Base64 圖片"],
       "category": "教育",
-      "status": "dev",
-      "link": "",
+      "status": "live",
+      "link": "https://ivanhy2026-dot.github.io/HermesAgent/johnny/",
       "repo": "https://github.com/ivanhy2026-dot/HermesAgent"
     },
     {

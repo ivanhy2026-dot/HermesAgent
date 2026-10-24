@@ -33,6 +33,7 @@ jobs:
           cp index.html dist/
           [ -d assets ] && cp -r assets dist/ || true
           [ -d navigator ] && cp -r navigator dist/ || true
+          [ -d johnny ] && cp -r johnny dist/ || true
           echo "dist/ ready:" && ls -1R dist/
 
       - name: Validate output
